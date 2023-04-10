@@ -242,6 +242,7 @@ func (s *Session) RequestWithLockedBucket(method, urlStr, contentType string, b 
 		}
 	}()
 
+	s.log(LogInformational, "rsp urlStr:%s, header:%+v", urlStr, resp.Header)
 	err = bucket.Release(resp.Header)
 	if err != nil {
 		return

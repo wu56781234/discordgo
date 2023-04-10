@@ -1,6 +1,7 @@
 package discordgo
 
 import (
+	"log"
 	"math"
 	"net/http"
 	"strconv"
@@ -96,10 +97,12 @@ func (r *RateLimiter) LockBucketObject(b *Bucket) *Bucket {
 	b.Lock()
 
 	if wait := r.GetWaitTime(b, 1); wait > 0 {
+		log.Printf("ratelimiter bucket:%s, wait:%v\n", b.Key, wait)
 		time.Sleep(wait)
 	}
 
 	b.Remaining--
+	log.Printf("ratelimiter bucket:%s, remaining:%d, reset:%v\n", b.Key, b.Remaining, b.reset)
 	return b
 }
 

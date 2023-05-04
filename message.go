@@ -241,6 +241,25 @@ type MessageSend struct {
 	Embed *MessageEmbed `json:"-"`
 }
 
+// UnmarshalJSON is a helper function to unmarshal the MessageSend.
+func (m *MessageSend) UnmarshalJSON(data []byte) error {
+	type messageSend MessageSend
+	var v struct {
+		messageSend
+		RawComponents []unmarshalableMessageComponent `json:"components"`
+	}
+	err := json.Unmarshal(data, &v)
+	if err != nil {
+		return err
+	}
+	*m = MessageSend(v.messageSend)
+	m.Components = make([]MessageComponent, len(v.RawComponents))
+	for i, v := range v.RawComponents {
+		m.Components[i] = v.MessageComponent
+	}
+	return err
+}
+
 // MessageEdit is used to chain parameters via ChannelMessageEditComplex, which
 // is also where you should get the instance from.
 type MessageEdit struct {
@@ -289,6 +308,25 @@ func (m *MessageEdit) SetEmbed(embed *MessageEmbed) *MessageEdit {
 func (m *MessageEdit) SetEmbeds(embeds []*MessageEmbed) *MessageEdit {
 	m.Embeds = embeds
 	return m
+}
+
+// UnmarshalJSON is a helper function to unmarshal the MessageEdit.
+func (m *MessageEdit) UnmarshalJSON(data []byte) error {
+	type messageEdit MessageEdit
+	var v struct {
+		messageEdit
+		RawComponents []unmarshalableMessageComponent `json:"components"`
+	}
+	err := json.Unmarshal(data, &v)
+	if err != nil {
+		return err
+	}
+	*m = MessageEdit(v.messageEdit)
+	m.Components = make([]MessageComponent, len(v.RawComponents))
+	for i, v := range v.RawComponents {
+		m.Components[i] = v.MessageComponent
+	}
+	return err
 }
 
 // AllowedMentionType describes the types of mentions used
